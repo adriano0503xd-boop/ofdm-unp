@@ -1,9 +1,125 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OFDM  · Universidad Nacional de Piura</title><meta name="description" content="Plataforma académica de monitoreo OFDM 16-QAM, Universidad Nacional de Piura"><link rel="stylesheet" href="styles.css"></head><body>
-<div class="shell"><aside class="sidebar"><div class="brand"><img src="escudo-unp.png" alt="Escudo UNP" onerror="this.style.display='none';document.getElementById('seal-fallback').style.display='grid'"><span id="seal-fallback" class="seal-fallback">UNP</span><div><b>UNIVERSIDAD NACIONAL<br>DE PIURA</b><small>INGENIERÍA ELECTRÓNICA</small></div></div><div class="side-head">PLATAFORMA DE COMUNICACIONES</div><nav id="nav"><a href="#inicio" data-page="inicio">⌂ <span>Inicio</span></a><a href="#arquitectura" data-page="arquitectura">▦ <span>Arquitectura</span></a><a href="#monitor" data-page="monitor">◉ <span>Monitor en vivo</span></a><a href="#resultados" data-page="resultados">▤ <span>Resultados</span></a><a href="#proyecto" data-page="proyecto">ⓘ <span>Acerca del proyecto</span></a></nav><div class="side-bottom"><span class="light"></span> OFDM · VI CICLO<br><small id="sidebar-mode">Configuración pendiente</small></div></aside>
-<main class="main"><header class="top"><span>TRABAJO FINAL DE TEORIA DE COMUNICACIONES / <b id="crumb">Inicio</b></span><span id="connect-badge" class="pill">SIN CONFIGURAR</span></header>
-<section class="page" data-page="inicio"><div class="hero"><div><div class="eyebrow">UNIVERSIDAD NACIONAL DE PIURA · VI CICLO</div><h1>Comunicación digital <span>OFDM</span> con modulación <span>16-QAM</span></h1><p>Plataforma académica de evaluación de un enlace digital entre un ESP32-S3 y un Arduino UNO R4 WiFi, con monitoreo en la nube.</p><div class="actions"><a class="primary" href="#monitor">Abrir monitor →</a><a class="secondary" href="#arquitectura">Explorar el sistema</a></div></div><div class="hero-orbit"><div class="orbit-inner">OFDM<small>16-QAM</small></div></div></div><div class="eyebrow spacing">VISIÓN GENERAL</div><h2>Entorno de experimentación digital</h2><div class="cards three"><article class="panel"><div class="tile">▤</div><h3>Modulación 16-QAM</h3><p>Cuatro bits por símbolo y representación en el plano complejo I/Q.</p></article><article class="panel"><div class="tile">≋</div><h3>Multiplexación OFDM</h3><p>64 puntos de IFFT/FFT y prefijo cíclico de 16 muestras.</p></article><article class="panel"><div class="tile">↔</div><h3>Datos en la nube</h3><p>Dashboard accesible por internet desde GitHub Pages, sin conexión directa al punto de acceso ESP32.</p></article></div></section>
-<section class="page" data-page="arquitectura"><div class="eyebrow">01 / DISEÑO DIGITAL</div><h1 class="page-title">Arquitectura del sistema</h1><p class="lead">El procesamiento OFDM es propio de los programas; la radio Wi-Fi transporta las muestras de forma digital y no constituye una señal OFDM de RF generada por el algoritmo.</p><div class="panel"><h2>Cadena de transmisión y recepción</h2><div class="diagram"><div class="diagram-col"><h4>ESP32-S3 · TX</h4><div class="node">01 · Generación de 256 bits</div><div class="down">↓</div><div class="node">02 · Mapeo Gray 16-QAM</div><div class="down">↓</div><div class="node">03 · IFFT y prefijo cíclico</div></div><div class="diagram-center"><b>Wi-Fi / TCP</b><span>80 muestras complejas</span><b>→</b><hr><b>HTTPS</b><span>Supabase → GitHub Pages</span></div><div class="diagram-col"><h4>UNO R4 WiFi · RX</h4><div class="node">04 · Recepción de muestras</div><div class="down">↓</div><div class="node">05 · Eliminar CP + FFT</div><div class="down">↓</div><div class="node">06 · 16-QAM + BER + EVM</div></div></div></div><div class="cards three"><article class="panel"><div class="mini">MODULACIÓN</div><h2>16-QAM</h2><p>4 bits por símbolo</p></article><article class="panel"><div class="mini">TAMAÑO DE TRANSFORMADA</div><h2>64 puntos</h2><p>64 portadoras ocupadas en la versión experimental</p></article><article class="panel"><div class="mini">PREFIJO CÍCLICO</div><h2>16 muestras</h2><p>80 muestras complejas por trama</p></article></div></section>
-<section class="page" data-page="monitor"><div class="page-head"><div><div class="eyebrow">02 / INSTRUMENTACIÓN</div><h1 class="page-title">Monitor de transmisión</h1><p class="lead">Mediciones publicadas por el equipo; los datos de ejemplo nunca se presentan como reales.</p></div><button id="refresh" class="primary">↻ Actualizar</button></div><div id="notice" class="notice">Configura la conexión con Supabase en config.js.</div><div class="cards four" id="stats"><article class="panel metric"><div class="mini">ÚLTIMA TRAMA RX</div><strong id="seq">—</strong><small>Secuencia reportada</small></article><article class="panel metric"><div class="mini">TRAMAS VÁLIDAS</div><strong id="valid">—</strong><small>Tramas verificadas</small></article><article class="panel metric"><div class="mini">TRAMAS INVÁLIDAS</div><strong id="invalid">—</strong><small>Integridad/recepción</small></article><article class="panel metric"><div class="mini">BER ACUMULADA</div><strong id="ber">—</strong><small>Bits erróneos / evaluados</small></article></div><div class="cards two"><article class="panel"><div class="panel-head"><h3>Constelación 16-QAM recibida</h3><span class="tag" id="qam-tag">SIN DATOS</span></div><p>64 símbolos recuperados después de la FFT</p><canvas id="qam" width="640" height="360" aria-label="Constelación QAM"></canvas></article><article class="panel"><div class="panel-head"><h3>Señal OFDM (baseband)</h3><span class="tag" id="wave-tag">SIN DATOS</span></div><p>Componente real de las muestras IFFT transmitidas</p><canvas id="wave" width="640" height="360" aria-label="Señal OFDM"></canvas></article></div><div class="cards three"><article class="panel metric"><div class="mini">EVM RMS (RX)</div><strong id="evm">—</strong><small>Error de constelación (%)</small></article><article class="panel metric"><div class="mini">BITS EVALUADOS</div><strong id="bits">—</strong><small>Tramas válidas × 256</small></article><article class="panel metric"><div class="mini">ÚLTIMA ACTUALIZACIÓN</div><strong id="time" class="smaller">—</strong><small>Hora del servidor</small></article></div></section>
-<section class="page" data-page="resultados"><div class="eyebrow">03 / RESULTADOS</div><h1 class="page-title">Registro de mediciones</h1><p class="lead">Registros guardados por la nube. Descarga un CSV para el informe y la exposición.</p><div class="panel"><div class="panel-head"><h3>Evolución de la BER acumulada</h3><button id="csv" class="secondary">↓ Exportar CSV</button></div><canvas id="history" width="1100" height="340" aria-label="Historial BER"></canvas></div><div class="panel"><h3>Últimas mediciones</h3><div class="table-scroll"><table><thead><tr><th>Fecha UTC</th><th>Trama</th><th>Válidas</th><th>Inválidas</th><th>BER</th><th>EVM (%)</th></tr></thead><tbody id="records"><tr><td colspan="6">Sin datos todavía</td></tr></tbody></table></div></div><p class="footnote">BER medida sobre muestras recuperadas digitalmente; no representa la BER de la capa física Wi-Fi. Si se añade ruido AWGN artificial, se registrará como escenario de simulación y no como medición del canal de RF.</p></section>
-<section class="page" data-page="proyecto"><div class="eyebrow">04 / INFORMACIÓN ACADÉMICA</div><h1 class="page-title">Acerca del proyecto</h1><p class="lead">Trabajo académico grupal · Universidad Nacional de Piura</p><div class="cards two"><article class="panel"><h2>Ficha del proyecto</h2><dl><dt>Universidad</dt><dd>Universidad Nacional de Piura</dd><dt>Curso</dt><dd>Teoría de Comunicaciones II</dd><dt>Docente</dt><dd>Ing. Ibañez Facundo José Ericson</dd><dt>Ciclo académico</dt><dd>VI ciclo</dd><dt>Modalidad</dt><dd>Trabajo grupal</dd><dt>Plataforma</dt><dd>ESP32-S3 + Arduino UNO R4 WiFi</dd></dl></article><article class="panel"><h2>Objetivo general</h2><p>Diseñar e implementar una plataforma de comunicación digital basada en OFDM y modulación 16-QAM, con procesamiento distribuido en microcontroladores, evaluación de errores y visualización remota de resultados.</p><h2>Alcance de la implementación</h2><p>Las muestras OFDM son transportadas por Wi-Fi/TCP. La web se aloja en GitHub Pages y consulta registros de Supabase, sin requerir una IP local para visualización.</p></article></div><div class="panel"><b>OFDM LAB · UNP</b><p>Interfaz académica independiente. No es un sitio oficial de la universidad.</p></div></section>
-<footer>OFDM LAB — Teoría de Comunicaciones II · UNP <span>Plataforma académica no oficial</span></footer></main></div><script src="app.js"></script></body></html>
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081223">
+  <meta name="description" content="Trabajo final de Teoría de Comunicaciones II, Universidad Nacional de Piura. Comunicación digital OFDM 16-QAM mediante ESP32-S3 y Arduino UNO R4 WiFi, con análisis de BER y EVM.">
+  <title>OFDM 16-QAM · Trabajo Final | UNP</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="escudo-unp.png" alt="Escudo de la Universidad Nacional de Piura" onerror="this.style.display='none';document.getElementById('seal-fallback').style.display='grid'">
+      <span id="seal-fallback" class="seal-fallback">UNP</span>
+      <div><b>UNIVERSIDAD NACIONAL<br>DE PIURA</b><small>INGENIERÍA ELECTRÓNICA<br>Y TELECOMUNICACIONES</small></div>
+    </div>
+    <div class="side-head">PLATAFORMA DE COMUNICACIONES</div>
+    <nav id="nav" aria-label="Navegación principal">
+      <a href="#inicio" data-page="inicio">⌂ <span>Inicio</span></a>
+      <a href="#arquitectura" data-page="arquitectura">▦ <span>Arquitectura</span></a>
+      <a href="#monitor" data-page="monitor">◉ <span>Monitor en vivo</span></a>
+      <a href="#resultados" data-page="resultados">▤ <span>Resultados</span></a>
+      <a href="#proyecto" data-page="proyecto">ⓘ <span>Acerca del proyecto</span></a>
+    </nav>
+    <div class="side-bottom"><span class="light" id="side-light"></span> TRABAJO FINAL · UNP<br><small id="sidebar-mode">Verificando sincronización...</small></div>
+  </aside>
+
+  <main class="main">
+    <header class="top"><span>TEORÍA DE COMUNICACIONES II / <b id="crumb">Inicio</b></span><span id="connect-badge" class="pill">VERIFICANDO</span></header>
+
+    <!-- 01 / INICIO -->
+    <section class="page" data-page="inicio">
+      <div class="home-hero">
+        <div class="home-content">
+          <div class="home-kicker"><span class="home-kicker-line"></span> UNIVERSIDAD NACIONAL DE PIURA · TRABAJO FINAL</div>
+          <h1>Sistema de<br>comunicación digital<br><span>OFDM 16-QAM</span></h1>
+          <p class="home-description">Implementación y evaluación experimental de un sistema OFDM con modulación 16-QAM, procesamiento distribuido en un ESP32-S3 y un Arduino UNO R4 WiFi, y análisis de resultados en la nube.</p>
+          <div class="home-chips"><span>OFDM</span><span>16-QAM</span><span>AWGN</span><span>LS / ZF</span></div>
+          <div class="actions"><a class="primary" href="#monitor">Ver monitor <span aria-hidden="true">↗</span></a><a class="secondary" href="#resultados">Explorar resultados</a></div>
+        </div>
+        <div class="home-visual" aria-label="Constelación ideal 16-QAM de referencia">
+          <div class="home-visual-header"><span>CONSTELACIÓN DE REFERENCIA</span><strong>16-QAM</strong></div>
+          <div class="home-constellation"><div class="home-axis home-axis-x"></div><div class="home-axis home-axis-y"></div><div class="home-points" id="home-points"></div><span class="home-label-i">I</span><span class="home-label-q">Q</span></div>
+          <div class="home-visual-footer"><span>Plano complejo I/Q</span><span>16 estados ideales</span></div>
+        </div>
+      </div>
+      <div class="home-specs">
+        <div class="home-spec"><small>MODULACIÓN</small><strong>16-QAM</strong><span>4 bits por símbolo</span></div>
+        <div class="home-spec"><small>TRANSFORMADA</small><strong>64 puntos</strong><span>IFFT / FFT</span></div>
+        <div class="home-spec"><small>PREFIJO CÍCLICO</small><strong>16 muestras</strong><span>Por símbolo OFDM</span></div>
+        <div class="home-spec"><small>CANAL EMULADO</small><strong>AWGN / Multi</strong><span>Evaluación de BER y EVM</span></div>
+      </div>
+      <div class="home-intro"><div class="eyebrow">VISIÓN DEL PROYECTO</div><h2>De la modulación digital al análisis experimental</h2><p>El transmisor genera muestras OFDM y aplica condiciones de canal controladas. El receptor recupera la información y devuelve métricas de desempeño. La plataforma permite observar las mediciones publicadas en Supabase y compararlas entre escenarios.</p></div>
+      <div class="cards three">
+        <article class="panel"><div class="tile">◈</div><h3>Transmisión OFDM</h3><p>Mapeo Gray 16-QAM, IFFT y prefijo cíclico.</p></article>
+        <article class="panel"><div class="tile">≋</div><h3>Evaluación del canal</h3><p>Ruido AWGN, multitrayecto, estimación LS y ecualización ZF.</p></article>
+        <article class="panel"><div class="tile">▥</div><h3>Análisis experimental</h3><p>BER, SER, EVM, constelaciones y registros de medición.</p></article>
+      </div>
+    </section>
+
+    <!-- 02 / ARQUITECTURA -->
+    <section class="page" data-page="arquitectura">
+      <div class="eyebrow">02 / ARQUITECTURA</div><h1 class="page-title">Arquitectura del sistema</h1>
+      <p class="lead">El algoritmo OFDM procesa muestras digitales; el enlace físico entre placas utiliza Wi-Fi/TCP. El ruido AWGN y los efectos multitrayecto se emulan en el transmisor y no constituyen una radio OFDM independiente.</p>
+      <div class="panel"><h2>Cadena de transmisión y recepción</h2><div class="diagram">
+        <div class="diagram-col"><h4>ESP32-S3 · TRANSMISOR</h4><div class="node">01 · Generación de bits y preámbulo</div><div class="down">↓</div><div class="node">02 · Mapeo Gray 16-QAM</div><div class="down">↓</div><div class="node">03 · IFFT + prefijo cíclico</div></div>
+        <div class="diagram-center"><b>CANAL EMULADO</b><span>Ideal · AWGN · Multitrayecto · ISI</span><b>↓</b><hr><b>Wi-Fi / TCP</b><span>Transporte de muestras complejas</span><b>→</b><hr><b>HTTPS</b><span>ESP32-S3 → Supabase → Página web</span></div>
+        <div class="diagram-col"><h4>UNO R4 WiFi · RECEPTOR</h4><div class="node">04 · Recepción e integridad de trama</div><div class="down">↓</div><div class="node">05 · Retiro de CP + FFT</div><div class="down">↓</div><div class="node">06 · LS / ZF + demapeo + BER / EVM</div></div>
+      </div></div>
+      <div class="cards three"><article class="panel"><div class="mini">MODULACIÓN</div><h2>16-QAM</h2><p>4 bits por símbolo, mapeo Gray.</p></article><article class="panel"><div class="mini">TRANSFORMADA</div><h2>64 puntos</h2><p>IFFT/FFT de cada símbolo OFDM.</p></article><article class="panel"><div class="mini">PREFIJO CÍCLICO</div><h2>16 muestras</h2><p>80 muestras por símbolo OFDM, incluido CP.</p></article></div>
+      <div class="panel"><h2>Alcance de la prueba</h2><p>El firmware actual procesa <strong>768 bits de datos por trama</strong> y registra métricas por escenario. La BER de la señal OFDM emulada es distinta de la integridad de las tramas transportadas por Wi-Fi/TCP.</p></div>
+    </section>
+
+    <!-- 03 / MONITOR -->
+    <section class="page" data-page="monitor">
+      <div class="page-head"><div><div class="eyebrow">03 / INSTRUMENTACIÓN</div><h1 class="page-title">Monitor de transmisión</h1><p class="lead">Última medición registrada en la nube. Las etiquetas indican la actualización de datos, no una conexión física continua del receptor.</p></div><button id="refresh" class="primary" type="button">↻ Actualizar</button></div>
+      <div id="notice" class="notice">Verificando disponibilidad de mediciones...</div>
+      <div class="scenario-strip"><span>ESCENARIO ACTUAL</span><strong id="scenario">—</strong><span>EB/N0 CONFIGURADO</span><strong id="ebn0">—</strong></div>
+      <div class="cards four" id="stats">
+        <article class="panel metric"><div class="mini">ÚLTIMA TRAMA</div><strong id="seq">—</strong><small>Secuencia registrada</small></article>
+        <article class="panel metric"><div class="mini">TRAMAS VÁLIDAS</div><strong id="valid">—</strong><small>Verificación de integridad</small></article>
+        <article class="panel metric"><div class="mini">TRAMAS INVÁLIDAS</div><strong id="invalid">—</strong><small>Recepción TCP</small></article>
+        <article class="panel metric"><div class="mini">BER DEL ESCENARIO</div><strong id="ber">—</strong><small>Bits erróneos / evaluados</small></article>
+      </div>
+      <div class="cards two">
+        <article class="panel"><div class="panel-head"><h3>Constelación 16-QAM recibida</h3><span class="tag" id="qam-tag">SIN DATOS</span></div><p>Símbolos recuperados tras FFT y procesamiento de recepción.</p><canvas id="qam" width="640" height="360" aria-label="Constelación 16-QAM"></canvas></article>
+        <article class="panel"><div class="panel-head"><h3>Señal OFDM en banda base</h3><span class="tag" id="wave-tag">SIN DATOS</span></div><p>Componente real de las muestras IFFT transmitidas.</p><canvas id="wave" width="640" height="360" aria-label="Señal OFDM"></canvas></article>
+      </div>
+      <div class="cards three">
+        <article class="panel metric"><div class="mini">EVM RMS</div><strong id="evm">—</strong><small>Magnitud del error vectorial</small></article>
+        <article class="panel metric"><div class="mini">BITS DEL ESCENARIO</div><strong id="bits">—</strong><small>Bits utilizados para calcular BER</small></article>
+        <article class="panel metric"><div class="mini">ÚLTIMO REGISTRO</div><strong id="time" class="smaller">—</strong><small>Hora local de publicación</small></article>
+      </div>
+    </section>
+
+    <!-- 04 / RESULTADOS -->
+    <section class="page" data-page="resultados">
+      <div class="eyebrow">04 / ANÁLISIS EXPERIMENTAL</div><h1 class="page-title">Resultados experimentales</h1>
+      <p class="lead">Comparación entre escenarios de canal y registros enviados a Supabase. Las curvas se construyen únicamente con mediciones disponibles.</p>
+      <div class="panel"><div class="panel-head"><h3>BER frente a Eb/N0 · Canal AWGN</h3><button id="csv" type="button" class="secondary">↓ Exportar CSV</button></div><p>Comparación de CSI perfecta y estimación LS/ZF. El eje BER utiliza escala logarítmica.</p><div class="chart-legend"><span class="legend-key cyan"></span> CSI perfecta <span class="legend-key purple"></span> LS / ZF <span class="legend-key muted"></span> Teórica 16-QAM (aprox.)</div><canvas id="ber-compare" width="1100" height="420" aria-label="BER vs Eb/N0"></canvas><p class="footnote">Se usa la medición con mayor cantidad de bits disponible para cada escenario y Eb/N0. El historial descargado puede representar solo una parte del barrido completo.</p></div>
+      <div class="cards two"><article class="panel"><h3>EVM frente a Eb/N0</h3><p>Comportamiento medido para escenarios AWGN.</p><canvas id="evm-compare" width="640" height="340" aria-label="EVM vs Eb/N0"></canvas></article><article class="panel"><h3>Interpretación de resultados</h3><div class="insight" id="results-summary">Esperando mediciones AWGN suficientes para comparar escenarios.</div><p>La relación Eb/N0 corresponde al ruido digital emulado. No representa la potencia o calidad de la radio Wi-Fi.</p></article></div>
+      <div class="panel"><h3>Evolución de BER entre registros</h3><p>Vista temporal de las mediciones más recientes; los saltos pueden corresponder a cambios de escenario.</p><canvas id="history" width="1100" height="330" aria-label="Historial BER"></canvas></div>
+      <div class="panel"><h3>Últimas mediciones</h3><div class="table-scroll"><table><thead><tr><th>Fecha UTC</th><th>Escenario</th><th>Trama</th><th>Válidas</th><th>Inválidas</th><th>Bits</th><th>BER</th><th>EVM (%)</th></tr></thead><tbody id="records"><tr><td colspan="8">Esperando registros...</td></tr></tbody></table></div></div>
+      <p class="footnote">La BER y la EVM miden el procesamiento de muestras digitales bajo el canal emulado. No son mediciones directas de errores de la capa física Wi-Fi.</p>
+    </section>
+
+    <!-- 05 / PROYECTO -->
+    <section class="page" data-page="proyecto">
+      <div class="eyebrow">05 / INFORMACIÓN ACADÉMICA</div><h1 class="page-title">Acerca del proyecto</h1><p class="lead">Trabajo final grupal · Universidad Nacional de Piura</p>
+      <div class="cards two"><article class="panel"><h2>Ficha del proyecto</h2><dl><dt>Universidad</dt><dd>Universidad Nacional de Piura</dd><dt>Carrera</dt><dd>Ingeniería Electrónica y Telecomunicaciones</dd><dt>Curso</dt><dd>Teoría de Comunicaciones II</dd><dt>Docente</dt><dd>Ing. Ibañez Facundo José Ericson</dd><dt>Modalidad</dt><dd>Trabajo final grupal</dd><dt>Plataforma</dt><dd>ESP32-S3 + Arduino UNO R4 WiFi</dd></dl></article>
+      <article class="panel"><h2>Objetivo general</h2><p>Diseñar e implementar un sistema de comunicación digital OFDM con modulación 16-QAM mediante procesamiento distribuido en microcontroladores, evaluación de errores y visualización remota de resultados.</p><h2>Alcance de la implementación</h2><p>El ESP32-S3 genera las señales y emula condiciones del canal. El UNO R4 WiFi realiza la recepción y recuperación de datos. Las muestras se transportan por Wi-Fi/TCP y las mediciones se publican en Supabase para su consulta desde GitHub Pages.</p></article></div>
+      <div class="panel"><h2>Integrantes del proyecto</h2><div class="cards three team-cards"><article class="team-card"><span>01 · INTEGRANTE</span><h3>Vargas Sarango</h3><p>Angel Felipe</p></article><article class="team-card"><span>02 · INTEGRANTE</span><h3>Pozo Requena</h3><p>Benjamin Paolo</p></article><article class="team-card"><span>03 · INTEGRANTE</span><h3>Salazar Sandoval</h3><p>Franco Adriano</p></article></div></div>
+      <div class="panel"><h2>Tecnologías del sistema</h2><div class="cards three"><article class="tech-card"><div class="mini">TRANSMISIÓN</div><h3>ESP32-S3</h3><p>Modulación, OFDM, canal emulado y publicación HTTPS.</p></article><article class="tech-card"><div class="mini">RECEPCIÓN</div><h3>UNO R4 WiFi</h3><p>FFT, demodulación, estimación de canal y cálculo de métricas.</p></article><article class="tech-card"><div class="mini">VISUALIZACIÓN</div><h3>Supabase + GitHub Pages</h3><p>Almacenamiento y panel académico accesible por internet.</p></article></div></div>
+      <div class="panel project-note"><b>TRABAJO FINAL · UNP</b><p>Plataforma académica independiente. No es un sitio web oficial de la Universidad Nacional de Piura.</p></div>
+    </section>
+
+    <footer>OFDM 16-QAM — Teoría de Comunicaciones II · UNP <span>Trabajo final académico · Sitio no oficial</span></footer>
+  </main>
+</div>
+</body>
+</html>
